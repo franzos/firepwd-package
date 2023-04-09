@@ -1,6 +1,13 @@
-# Firepwd.py, an open source tool to decrypt Mozilla protected passwords 
+# Firepwd, an open source tool to decrypt Mozilla protected passwords 
 
-18apr2020
+This is a fork of [firepwd.py](https://github.com/lclevy/firepwd) by Laurent Clévy.
+
+Changes:
+
+- (NEW) Installation via pip (to use `firepwd` system-wide)
+- (NEW) Usage as module, to integrate in other applications
+
+_This is hardly perfect; just a quick'n dirty revision to make this excellent utility more versatile._
 
 ### Introduction
 
@@ -31,7 +38,9 @@ key3.db is read directly, the 3rd party bsddb python module is NOT needed.
 
 ### Usage
 
-By default, firepwd.py processes key3.db (or key4.db) and signons.sqlite (logins.json) files in current directory, but an alternative directory can be provided using the -d option. Do not forget the '/' 
+#### Command line
+
+By default, firepwd processes key3.db (or key4.db) and signons.sqlite (logins.json) files in current directory, but an alternative directory can be provided using the -d option. Do not forget the '/' 
 at the end.
 
 If a master password has been set, provide it using the -p option.
@@ -39,8 +48,8 @@ If a master password has been set, provide it using the -p option.
 ### Valid verbose levels (-v) are from 0 (default) to 2.
 
 ```
-$ python firepwd.py -h
-Usage: firepwd.py [options] 
+$ firepwd -h
+Usage: firepwd [options] 
 
 Options:
   -h, --help            show this help message and exit
@@ -51,10 +60,10 @@ Options:
   -d DIRECTORY, --dir=DIRECTORY
                         directory
 						
-$ python firepwd.py -d /c/Users/lclevy/AppData/Roaming/Mozilla/Firefox/Profiles/o8syoe2h.default/
+$ firepwd -d /c/Users/lclevy/AppData/Roaming/Mozilla/Firefox/Profiles/o8syoe2h.default/
 no stored passwords
 
-$ python firepwd.py -p 'MISC*' -d mozilla_db/
+$ firepwd -p 'MISC*' -d mozilla_db/
  SEQUENCE {
    SEQUENCE {
      OBJECTIDENTIFIER 1.2.840.113549.1.12.5.1.3
@@ -89,7 +98,7 @@ decoding 3042020100021100f8000000000000000000000000000001020100021813c1e53d51a1e
 decrypting login/password pairs
 http://challenge01.root-me.org: 'login\x03\x03\x03' , 'password\x08\x08\x08\x08\x08\x08\x08\x08'
 
-$ python firepwd.py -d /c/Users/laurent/AppData/Roaming/Thunderbird/Profiles/3luvewzm.default/
+$ firepwd -d /c/Users/laurent/AppData/Roaming/Thunderbird/Profiles/3luvewzm.default/
  SEQUENCE {
    SEQUENCE {
      OBJECTIDENTIFIER 1.2.840.113549.1.12.5.1.3
@@ -125,7 +134,7 @@ decrypting login/password pairs
 [censored]
 
 
-$ python firepwd.py -d /c/Users/laurent/AppData/Roaming/Mozilla/Firefox/Profiles/77l7qxfi.default/
+$ firepwd -d /c/Users/laurent/AppData/Roaming/Mozilla/Firefox/Profiles/77l7qxfi.default/
  SEQUENCE {
    SEQUENCE {
      OBJECTIDENTIFIER 1.2.840.113549.1.12.5.1.3
@@ -139,7 +148,7 @@ $ python firepwd.py -d /c/Users/laurent/AppData/Roaming/Mozilla/Firefox/Profiles
 decrypting privKeyData
 [...]
 
->python firepwd.py -v 2 -p MISC* -d ff50\
+> firepwd -v 2 -p MISC* -d ff50\
 globalSalt: b'5ed0adce15d896b84115f530be4e259f72beda91'
  SEQUENCE {
    SEQUENCE {
@@ -195,13 +204,34 @@ decrypting login/password pairs
 
 ```
 
+#### Module
+
+```python
+password = '' # master password
+path = '/home/franz/.thunderbird/796tfbrn.default-default-1/'
+
+results = Firepwd(password, path, verbose=0)
+```
+
+Expected result:
+
+```python
+[
+  FirepwdResult(
+    url='imap://imap.fastmail.com',
+    login='xwphcwsdyxdkgxuv',
+    password='xwphcwsdyxdkgxuv'
+  )
+]
+```
+
 ### Installation
 
 ```
-pip install -r requirements.txt
+pip install .
 ```
 
-Tested with python 3.7.3, PyCryptodome 3.9.0 and pyasn 0.4.8
+Tested with python 3.8+, PyCryptodome 3.9.0 and pyasn 0.4.8
 
 Modules required:
 - pyasn1,  https://pypi.python.org/pypi/pyasn1/, for ASN1 decoding
