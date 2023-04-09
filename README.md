@@ -219,7 +219,7 @@ Expected result:
 [
   FirepwdResult(
     url='imap://imap.fastmail.com',
-    login='xwphcwsdyxdkgxuv',
+    login='user@fastmail.com',
     password='xwphcwsdyxdkgxuv'
   )
 ]

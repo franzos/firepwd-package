@@ -36,15 +36,17 @@ def Firepwd(password: str, path: str, verbose: int = 0):
             print ('%20s:' % (i[2]),end='')  #site URL
             iv = i[0][1]
             ciphertext = i[0][2] 
-            print ( unpad( DES3.new( key, DES3.MODE_CBC, iv).decrypt(ciphertext),8 ), end=',')
+            login = unpad( DES3.new( key, DES3.MODE_CBC, iv).decrypt(ciphertext),8 )
+            print ( login, end=',')
             iv = i[1][1]
-            ciphertext = i[1][2] 
-            print ( unpad( DES3.new( key, DES3.MODE_CBC, iv).decrypt(ciphertext),8 ) )
+            ciphertext = i[1][2]
+            password = unpad( DES3.new( key, DES3.MODE_CBC, iv).decrypt(ciphertext),8 )
+            print ( password )
 
             results.append(FirepwdResult(
                 url=i[2],
-                login=unpad( DES3.new( key, DES3.MODE_CBC, iv).decrypt(ciphertext),8 ).decode(),
-                password=unpad( DES3.new( key, DES3.MODE_CBC, iv).decrypt(ciphertext),8 ).decode()
+                login=login.decode(),
+                password=password.decode()
             ))
 
     return results
